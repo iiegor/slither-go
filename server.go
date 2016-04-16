@@ -32,8 +32,6 @@ func NewClient(id int, ws *websocket.Conn) *Client {
   // Write new client
   c.Socket.WriteMessage(websocket.BinaryMessage, bindata)
 
-  println("Sent!")
-
   go c.Receiver()
 
   return &c
@@ -43,7 +41,6 @@ func (c *Client) Receiver() {
   for {
     _, p, err := c.Socket.ReadMessage()
     if err != nil {
-      fmt.Println("breaking..")
       println(err.Error())
       break
     }
