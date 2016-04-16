@@ -71,34 +71,6 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
   client := NewClient(Counter, ws)
 
   fmt.Printf("New user with id: %v\n", client.Id)
-
-  /*
-  var err error
-  var message []byte
-
-  // Ensure we close the socket at the end
-  defer func() {
-    if err = ws.Close(); err != nil {
-      fmt.Println("Websocket could not be closed", err.Error())
-    }
-  }()
-
-  Counter++
-  client := NewClient(Counter, ws, ws.Request().RemoteAddr)
-
-  // Push client to the list
-  Clients[client.id] = client
-
-  // Receiving loop
-  for {
-    if err = websocket.Message.Receive(ws, &message); err != nil {
-      fmt.Println("Can't read the received message: ", err.Error())
-
-      delete(Clients, client.id)
-    }
-
-    println(client.id)
-  }*/
 }
 
 func main() {
@@ -118,7 +90,7 @@ func main() {
   // Handle path requests
   http.HandleFunc("/slither", wsHandler)
   http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "<a href=\"http://github.com/iiegor/slither\">Powered by iiegor/slither</a>")
+    fmt.Fprintf(w, "<a href=\"https://github.com/iiegor/slither-go\">Powered by iiegor/slither-go</a>")
   })
 
   err := http.ListenAndServe(":8080", nil)
