@@ -1,0 +1,10 @@
+[target]
+path = slither
+
+[deps]
+types = 
+github.com/gorilla/websocket = commit:e2e3d84
+
+[res]
+include = 
+
