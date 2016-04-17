@@ -1,5 +1,5 @@
 # slither-go
-Golang server implementation of the slither game
+High performance implementation of the original slither game server
 
 ## Requirements
 - [Go](https://golang.org/) v1.6
