@@ -1,5 +1,10 @@
 package entities
 
+type SnakeParts struct {
+  x int
+  y int
+}
+
 type Snake struct {
   Id int16
   Username string
@@ -11,4 +16,5 @@ type Snake struct {
   Speed int16
   X int32
   D int32
+  Parts SnakeParts
 }

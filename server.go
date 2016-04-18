@@ -24,31 +24,54 @@ var bindata = []byte{0, 0, 97, 0, 84, 96, 1, 155, 1, 44, 0, 144, 48, 2, 27, 0, 4
 type Client struct {
   Id int
   Socket *websocket.Conn
+  Write chan []byte
+  Broadcast chan []byte
 }
 
 func NewClient(id int, ws *websocket.Conn) *Client {
-  c := Client{id, ws}
-
-  // Write new client
-  c.Socket.WriteMessage(websocket.BinaryMessage, bindata)
+  c := Client{
+    id,
+    ws,
+    make(chan []byte),
+    make(chan []byte),
+  }
 
   go c.Receiver()
+  go c.Writer()
 
   return &c
 }
 
 func (c *Client) Receiver() {
+  // Send snake before the loop
+  c.Write <- bindata
+
   for {
     _, p, err := c.Socket.ReadMessage()
     if err != nil {
       println(err.Error())
       break
     }
-    
-    println(p)
+
+    byteLength := len(p)
+    println("New packet received with a length of", byteLength)
   }
 
   c.Socket.Close()
+}
+
+func (c *Client) Writer() {
+  for {
+    select {
+      case message := <-c.Write:
+        c.Socket.WriteMessage(websocket.BinaryMessage, message)
+
+      case message := <-c.Broadcast:
+        for client := range Clients {
+          Clients[client].Socket.WriteMessage(websocket.BinaryMessage, message)
+        }
+    }
+  }
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
@@ -93,7 +116,7 @@ func main() {
     fmt.Fprintf(w, "<a href=\"https://github.com/iiegor/slither-go\">Powered by iiegor/slither-go</a>")
   })
 
-  err := http.ListenAndServe(":8080", nil)
+  err := http.ListenAndServe(":443", nil)
   if err != nil {
     panic("Can't start the server: " + err.Error())
   }
